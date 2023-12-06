@@ -149,6 +149,15 @@ class Game
         end
         return false
     end
+    def powerOfASet()
+        reds = @sets.map { |set| set.red }
+        minRed = reds.sort.uniq.last
+        blues = @sets.map { |set| set.blue }
+        minBlue = blues.sort.uniq.last
+        greens = @sets.map { |set| set.green }
+        minGreen = greens.sort.uniq.last
+        return minRed*minBlue*minGreen
+    end
 end
 
 def formatInput(input) 
@@ -189,10 +198,18 @@ def checkGameOk(games)
     print result.to_s
 end
 
+def sortASC(allCubeOfOneColor)
+    return allCubeOfOneColor.sort.uniq
+end
+
 games = formatInput(input)
 #checkGameOk(games)
-
-# PART 2
+# PART 2 + si tout fais en recursivité
 # TODO : FIND minimum red / Green / Blue / Game  => function de tri (attention au doublon) + recher dicho (recursive)
 # TODO : Then minRed * minGreen * minBlue 
 # Then : Sum result of all game
+sumPower = 0
+games.each do |game|
+    sumPower += game.powerOfASet
+end
+print sumPower
