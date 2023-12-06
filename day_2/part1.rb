@@ -190,4 +190,9 @@ def checkGameOk(games)
 end
 
 games = formatInput(input)
-checkGameOk(games)
+#checkGameOk(games)
+
+# PART 2
+# TODO : FIND minimum red / Green / Blue / Game  => function de tri (attention au doublon) + recher dicho (recursive)
+# TODO : Then minRed * minGreen * minBlue 
+# Then : Sum result of all game
