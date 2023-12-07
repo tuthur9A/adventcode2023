@@ -8,6 +8,9 @@ input = '467..114..
 ......755.
 ...$.*....
 .664.598..'
+
+
+
 =begin
 Regle 
 Pour qu'un nombre soit pris en compte : 
@@ -24,17 +27,142 @@ par line => check si symbole et get leur index
 puis check every mouvment from symbole to check if number and check if that number > 10 => ajout dans une tableau ?
 =end
 
+class Char 
+    def initialize(indexLine, indexChar, char, isNumber, isSymbole)
+        @indexLine = indexLine
+        @indexChar = indexChar
+        @char = char
+        @isNumber = isNumber
+        @isSymbole = isSymbole
+    end
+    def getIndex()
+        return [@indexLine, @indexChar]
+    end
+    def lineIndex()
+        @indexLine
+    end
+    def charIndex()
+        @indexChar
+    end
+    def to_s
+        @char.to_s
+    end
+    def getChar()
+        @char
+    end
+end
+
+class Line 
+    def initialize(index, chars)
+        @index = index
+        @chars = chars
+    end
+    def to_s
+        @chars.join("")
+    end
+    def getChar(index)
+        @chars[index]
+    end
+end
+
+class Matrix
+    def initialize(lines)
+        @lines = lines
+    end
+    def printLines
+        @lines.each do |line|
+            print line.to_s
+            print "
+"
+        end
+    end
+    def getLine(index)
+        @lines[index]
+    end
+end
+
 def formatInput(input)
     inputFormatted = []
+    chars = []
     input.split("\n").each_with_index do |line, lineIndex|
-        inputFormatted.push(line.split(""))
+        listChar = line.split("")
+        inputFormatted.push(Line.new(lineIndex, listChar))
     end
-    return inputFormatted
+    return Matrix.new(inputFormatted)
+end
+
+def searchSymbole(input)
+    chars = []
+    input.split("\n").each_with_index do |line, lineIndex|
+        listChar = line.split("")
+        listChar.each_with_index do |char, charIndex|
+            if char.match(/([!@#$%^&*()_+{}|:">?<\[\]\\\/';,`~])/) then
+                chars.push(Char.new(lineIndex, charIndex, char, false, true))
+            end
+        end
+    end
+    return chars
+end
+def searchNumber(input)
+    chars = []
+    input.split("\n").each_with_index do |line, lineIndex|
+        listChar = line.split("")
+        listChar.each_with_index do |char, charIndex|
+            if char.match(/[0-9]/) then
+                chars.push(Char.new(lineIndex, charIndex, char, true, false))
+            end
+        end
+    end
+    return chars
+end
+
+def findAllNumber(lineIndex, charIndex, matrice) 
+    #  a gauche . donc for vers la droite jusqu'a autre chose qu'un chiffre 
+    #  a droite . donc for vers la gauche jusqu'a autre chose qu'un chiffre 
+    #  a droite . et a droite donc for vers la gauche et la droite jusqu'a autre chose qu'un chiffre 
+    return matrice.getLine(lineIndex).getChar(charIndex)
+end
+
+def checkFunction(lineIndex, charIndex, matrice) 
+    #  [1,3] = [0,3]; [0,2];[0,4];[1,2];[1,4];[2,3]; [2,2];[2,4];
+    line = matrice.getLine(lineIndex - 1)
+    for i in charIndex - 1..charIndex + 1 do 
+        if line.getChar(i).match(/[0-9]/) then
+            allNumber = findAllNumber(lineIndex - 1, i, matrice)
+            print allNumber
+            print "
+            "
+        end
+    end
+    line = matrice.getLine(lineIndex + 1)
+    for i in charIndex - 1..charIndex + 1 do 
+        if line.getChar(i).match(/[0-9]/) then
+            allNumber = findAllNumber(lineIndex + 1, i, matrice)
+            print allNumber
+            print "
+            "
+        end
+    end
+
+    line = matrice.getLine(lineIndex)
+      if line.getChar(charIndex - 1).match(/[0-9]/) then
+        allNumber = findAllNumber(lineIndex, charIndex-1, matrice)
+        print allNumber
+        print "
+        "
+    end
+    if line.getChar(charIndex + 1).match(/[0-9]/) then
+        allNumber = findAllNumber(lineIndex, charIndex+1, matrice)
+        print allNumber
+        print "
+        "
+    end
 end
 
 matrice = formatInput(input)
-matrice.each do |line|
-    print line.join("")
-    print "
-"
+symboleInInput = searchSymbole(input)
+numberInInput = searchNumber(input)
+
+symboleInInput.each do |symbole| 
+    checkFunction(symbole.lineIndex, symbole.charIndex, matrice)
 end
