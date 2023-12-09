@@ -1,5 +1,4 @@
-input =
-'467..114..
+input ='467..114..
 ...*......
 ..35..633.
 ......#...
@@ -50,6 +49,23 @@ class Char
     end
     def getChar()
         @char
+    end
+end
+
+def numberInLine
+    def initialize(indexStart, indexEnd, number)
+        @indexStart = indexStart
+        @indexEnd = indexEnd
+        @number = number
+    end
+    def setNumber(number)
+        @number = number
+    end
+    def getNumber()
+        @number
+    end
+    def getIndex()
+        return [@indexStart, @indexEnd]
     end
 end
 
@@ -119,6 +135,7 @@ end
 
 def findAllNumber(lineIndex, charIndex, matrice)
     #  a gauche . donc for vers la droite jusqu'a autre chose qu'un chiffre
+
     #  a droite . donc for vers la gauche jusqu'a autre chose qu'un chiffre
     #  a droite . et a droite donc for vers la gauche et la droite jusqu'a autre chose qu'un chiffre
     return matrice.getLine(lineIndex).getChar(charIndex)
@@ -132,9 +149,9 @@ def checkFunction(lineIndex, charIndex, matrice)
         if line.getChar(i).match(/[0-9]/) then
             if ( i >= charIndex && sameNumber.include?(line.getChar(i - 1))) then
                 newNum = line.getChar(i - 1).to_s + line.getChar(i).to_s
-                sameNumber = sameNumber.map { |x| x == line.getChar(i - 1) ? newNum : x }
+                sameNumber = sameNumber.map { |x| x.num == line.getChar(i - 1) ? {num: newNum, indexStart: x.indexStart, indexEnd: i} : x }
             else
-                sameNumber.push(line.getChar(i))
+                sameNumber.push({num: line.getChar(i), indexStart: i, indexEnd: i})
             end
         end
     end
@@ -143,21 +160,21 @@ def checkFunction(lineIndex, charIndex, matrice)
         if line.getChar(i).match(/[0-9]/) then
             if ( i >= charIndex && sameNumber.include?(line.getChar(i - 1))) then
                 newNum = line.getChar(i - 1).to_s + line.getChar(i).to_s
-                sameNumber = sameNumber.map { |x| x == line.getChar(i - 1) ? newNum : x }
+                sameNumber = sameNumber.map { |x| x.num == line.getChar(i - 1) ? {num: newNum, indexStart: x.indexStart, indexEnd: i} : x }
             else
-                sameNumber.push(line.getChar(i))
+                sameNumber.push({num: line.getChar(i), indexStart: i, indexEnd: i})
             end
         end
     end
 
     line = matrice.getLine(lineIndex)
-      if line.getChar(charIndex - 1).match(/[0-9]/) then
-        sameNumber.push(line.getChar(charIndex - 1))
+    if line.getChar(charIndex - 1).match(/[0-9]/) then
+        sameNumber.push({num: line.getChar(charIndex - 1), indexStart: charIndex - 1, indexEnd: charIndex - 1})
     end
     if line.getChar(charIndex + 1).match(/[0-9]/) then
-        sameNumber.push(line.getChar(charIndex + 1))
+        sameNumber.push({num: line.getChar(charIndex + 1), indexStart: charIndex + 1, indexEnd: charIndex + 1})
     end
-    print sameNumber
+    print sameNumber.select { |x| x == line.getChar(i - 1)}
     print "
     "
 end
