@@ -135,12 +135,10 @@ def checkFunction(lineIndex, charIndex, matrice)
         end
     end
     line = matrice.getLine(lineIndex + 1)
+    sameNumber = []
     for i in charIndex - 1..charIndex + 1 do 
         if line.getChar(i).match(/[0-9]/) then
-            allNumber = findAllNumber(lineIndex + 1, i, matrice)
-            print allNumber
-            print "
-            "
+            # TODO : CHECK SI SAME NUMBER
         end
     end
 
