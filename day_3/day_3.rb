@@ -1,4 +1,5 @@
-input = '467..114..
+input =
+'467..114..
 ...*......
 ..35..633.
 ......#...
@@ -12,22 +13,22 @@ input = '467..114..
 
 
 =begin
-Regle 
-Pour qu'un nombre soit pris en compte : 
-1 - sur même ligne qu'un symbole (sauf le .) n+1 ou n-1
-2 - sur même colone n+1 ou n-1
-3 diagonalement ( déplacement 1 en haut 1 sur le cote )
+Regle
+Pour qu'un nombre soit pris en compte :
+1 - sur mï¿½me ligne qu'un symbole (sauf le .) n+1 ou n-1
+2 - sur mï¿½me colone n+1 ou n-1
+3 diagonalement ( dï¿½placement 1 en haut 1 sur le cote )
 =end
 #/\d/ => regex pour check si number
 #/([!@#$%^&*()_+{}|:">?<\[\]\\\/';,`~])/ => regex pour check si symbole
 
 =begin
-Idée : 
-par line => check si symbole et get leur index 
+Idï¿½e :
+par line => check si symbole et get leur index
 puis check every mouvment from symbole to check if number and check if that number > 10 => ajout dans une tableau ?
 =end
 
-class Char 
+class Char
     def initialize(indexLine, indexChar, char, isNumber, isSymbole)
         @indexLine = indexLine
         @indexChar = indexChar
@@ -52,7 +53,7 @@ class Char
     end
 end
 
-class Line 
+class Line
     def initialize(index, chars)
         @index = index
         @chars = chars
@@ -116,51 +117,55 @@ def searchNumber(input)
     return chars
 end
 
-def findAllNumber(lineIndex, charIndex, matrice) 
-    #  a gauche . donc for vers la droite jusqu'a autre chose qu'un chiffre 
-    #  a droite . donc for vers la gauche jusqu'a autre chose qu'un chiffre 
-    #  a droite . et a droite donc for vers la gauche et la droite jusqu'a autre chose qu'un chiffre 
+def findAllNumber(lineIndex, charIndex, matrice)
+    #  a gauche . donc for vers la droite jusqu'a autre chose qu'un chiffre
+    #  a droite . donc for vers la gauche jusqu'a autre chose qu'un chiffre
+    #  a droite . et a droite donc for vers la gauche et la droite jusqu'a autre chose qu'un chiffre
     return matrice.getLine(lineIndex).getChar(charIndex)
 end
 
-def checkFunction(lineIndex, charIndex, matrice) 
+def checkFunction(lineIndex, charIndex, matrice)
     #  [1,3] = [0,3]; [0,2];[0,4];[1,2];[1,4];[2,3]; [2,2];[2,4];
     line = matrice.getLine(lineIndex - 1)
-    for i in charIndex - 1..charIndex + 1 do 
+    sameNumber = []
+    for i in charIndex - 1..charIndex + 1 do
         if line.getChar(i).match(/[0-9]/) then
-            allNumber = findAllNumber(lineIndex - 1, i, matrice)
-            print allNumber
-            print "
-            "
+            if ( i >= charIndex && sameNumber.include?(line.getChar(i - 1))) then
+                newNum = line.getChar(i - 1).to_s + line.getChar(i).to_s
+                sameNumber = sameNumber.map { |x| x == line.getChar(i - 1) ? newNum : x }
+            else
+                sameNumber.push(line.getChar(i))
+            end
         end
     end
     line = matrice.getLine(lineIndex + 1)
-    sameNumber = []
-    for i in charIndex - 1..charIndex + 1 do 
+    for i in charIndex - 1..charIndex + 1 do
         if line.getChar(i).match(/[0-9]/) then
-            # TODO : CHECK SI SAME NUMBER
+            if ( i >= charIndex && sameNumber.include?(line.getChar(i - 1))) then
+                newNum = line.getChar(i - 1).to_s + line.getChar(i).to_s
+                sameNumber = sameNumber.map { |x| x == line.getChar(i - 1) ? newNum : x }
+            else
+                sameNumber.push(line.getChar(i))
+            end
         end
     end
 
     line = matrice.getLine(lineIndex)
       if line.getChar(charIndex - 1).match(/[0-9]/) then
-        allNumber = findAllNumber(lineIndex, charIndex-1, matrice)
-        print allNumber
-        print "
-        "
+        sameNumber.push(line.getChar(charIndex - 1))
     end
     if line.getChar(charIndex + 1).match(/[0-9]/) then
-        allNumber = findAllNumber(lineIndex, charIndex+1, matrice)
-        print allNumber
-        print "
-        "
+        sameNumber.push(line.getChar(charIndex + 1))
     end
+    print sameNumber
+    print "
+    "
 end
 
 matrice = formatInput(input)
 symboleInInput = searchSymbole(input)
 numberInInput = searchNumber(input)
 
-symboleInInput.each do |symbole| 
+symboleInInput.each do |symbole|
     checkFunction(symbole.lineIndex, symbole.charIndex, matrice)
 end
